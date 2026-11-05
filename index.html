@@ -3,350 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NASA Deep Space Ultimate Portal - 1 File Only</title>
+    <title>NASA Deep Space Solutions Control Matrix</title>
     <style>
-        /* --- KHU VỰC CSS: THIẾT KẾ GIAO DIỆN --- */
         :root {
-            --bg-main: #05050e;
-            --bg-card: rgba(15, 20, 45, 0.6);
-            --text-primary: #ffffff;
-            --text-secondary: #94a3b8;
-            --nasa-blue: #0b3d91;
+            --bg-dark: #030712;
+            --bg-panel: rgba(17, 24, 39, 0.85);
+            --text-glow: #38bdf8;
+            --text-sub: #9ca3af;
             --nasa-red: #fc3d21;
-            --border-color: rgba(255, 255, 255, 0.08);
+            --border-neon: rgba(56, 189, 248, 0.2);
+            --border-hover: rgba(252, 61, 33, 0.4);
         }
 
-        [data-theme="light"] {
-            --bg-main: #f1f5f9;
-            --bg-card: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --border-color: #cbd5e1;
-        }
-
-        * { 
-            box-sizing: border-box; 
-            transition: all 0.2s ease; 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text-primary);
-            position: relative;
-            overflow-x: hidden;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 30px 20px;
+            background-image: radial-gradient(circle at 50% 50%, #0f172a 0%, #030712 100%);
         }
 
-        /* Canvas tạo hiệu ứng không gian tương tác */
-        #space-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -1;
-            pointer-events: auto;
+        header {
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto 40px auto;
+            border-bottom: 2px solid rgba(56, 189, 248, 0.1);
+            padding-bottom: 20px;
         }
 
-        .navbar {
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 15px 30px;
+        header h1 {
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+            margin-bottom: 10px;
         }
 
-        .nav-container { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            max-width: 1300px; 
-            margin: 0 auto; 
+        header h1 span {
+            color: var(--nasa-red);
         }
 
-        .logo { 
-            font-size: 1.4rem; 
-            font-weight: bold; 
-            display: flex; 
-            gap: 8px; 
+        header p {
+            color: var(--text-sub);
+            font-size: 1.05rem;
         }
 
-        .nav-controls {
+        /* Thanh điều khiển Tìm kiếm & Thống kê nhanh */
+        .dashboard-controls {
+            max-width: 1200px;
+            margin: 0 auto 30px auto;
             display: flex;
-            gap: 10px;
-        }
-
-        .theme-btn { 
-            background: transparent; 
-            border: 1px solid var(--border-color); 
-            color: var(--text-primary); 
-            padding: 8px 16px; 
-            border-radius: 20px; 
-            cursor: pointer; 
-            font-weight: 600;
-        }
-
-        .sound-off {
-            border-color: rgba(255, 255, 255, 0.3) !important;
-            opacity: 0.6;
-        }
-
-        .sound-on {
-            border-color: #4ade80 !important;
-            color: #4ade80 !important;
-            box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
-            opacity: 1;
-        }
-
-        /* Trình mô phỏng bảng tính ảnh hưởng sinh học */
-        .interactive-calc-section {
-            max-width: 1300px; 
-            margin: 30px auto; 
-            padding: 0 20px;
-        }
-
-        .calc-container {
-            background: linear-gradient(135deg, rgba(11, 61, 145, 0.2), rgba(252, 61, 33, 0.05));
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 30px; 
-            border-radius: 16px; 
-            backdrop-filter: blur(10px);
-        }
-
-        .calc-inputs { 
-            display: flex; 
-            gap: 15px; 
-            margin: 20px 0; 
-        }
-
-        .calc-inputs input {
-            padding: 12px; 
-            background: rgba(0,0,0,0.3); 
-            border: 1px solid var(--border-color); 
-            color: #fff; 
-            border-radius: 8px; 
-            font-size: 1.1rem; 
-            width: 120px;
-        }
-
-        .calc-inputs button {
-            background: var(--nasa-red); 
-            color: white; 
-            border: none; 
-            padding: 12px 25px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: bold;
-        }
-
-        .calc-inputs button:hover { 
-            transform: scale(1.03); 
-            background: #cc331a; 
-        }
-
-        .calc-results {
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 15px; 
-            background: rgba(0,0,0,0.2); 
-            padding: 20px; 
-            border-radius: 10px;
-        }
-
-        .res-item strong { 
-            font-size: 1.25rem; 
-            color: #38bdf8; 
-        }
-
-        .status-safe { 
-            color: #4ade80; 
-            font-weight: bold; 
-        }
-
-        .status-danger { 
-            color: #f87171; 
-            font-weight: bold; 
-            animation: pulse 1s infinite alternate; 
-        }
-
-        @keyframes pulse { 
-            from { opacity: 0.6; } 
-            to { opacity: 1; } 
-        }
-
-        /* Thanh tìm kiếm và bộ lọc */
-        .control-panel { 
-            max-width: 1300px; 
-            margin: 20px auto; 
-            padding: 0 20px; 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: space-between; 
-            gap: 15px; 
-        }
-
-        .search-box input { 
-            width: 320px; 
-            padding: 12px; 
-            background: var(--bg-card); 
-            border: 1px solid var(--border-color); 
-            border-radius: 8px; 
-            color: var(--text-primary); 
-        }
-
-        .filter-btn { 
-            background: var(--bg-card); 
-            color: var(--text-primary); 
-            border: 1px solid var(--border-color); 
-            padding: 10px 20px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: 600;
-        }
-
-        .filter-btn.active, .filter-btn:hover { 
-            background: var(--nasa-blue); 
-            color: white; 
-            border-color: var(--nasa-blue); 
-        }
-
-        /* Lưới hiển thị danh sách các thẻ rủi ro */
-        .main-content { 
-            max-width: 1300px; 
-            margin: 30px auto; 
-            padding: 0 20px; 
-        }
-
-        .grid-layout { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-            gap: 25px; 
-        }
-
-        .info-card {
-            background: var(--bg-card); 
-            border: 1px solid var(--border-color); 
-            border-radius: 12px; 
-            padding: 20px; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-            position: relative;
-        }
-
-        .info-card:hover { 
-            transform: translateY(-4px); 
-            border-color: var(--nasa-blue); 
-            box-shadow: 0 8px 16px rgba(11, 61, 145, 0.2);
-        }
-
-        .info-card h3 { 
-            margin: 8px 0; 
-            font-size: 1.15rem; 
-        }
-
-        .info-card p { 
-            color: var(--text-secondary); 
-            font-size: 0.9rem; 
-            line-height: 1.5; 
-            flex-grow: 1; 
-        }
-
-        .card-actions {
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-top: 15px; 
-            padding-top: 15px; 
-            border-top: 1px solid var(--border-color);
-        }
-
-        .vote-btn {
-            background: rgba(255, 255, 255, 0.08); 
-            border: none; 
-            padding: 6px 12px; 
-            border-radius: 6px; 
-            color: var(--text-primary); 
-            cursor: pointer; 
-            display: flex; 
-            gap: 5px; 
+            flex-wrap: wrap;
+            justify-content: space-between;
             align-items: center;
-            font-weight: 600;
+            gap: 20px;
         }
 
-        .vote-btn:hover { 
-            background: rgba(252, 61, 33, 0.2); 
-            color: var(--nasa-red); 
+        .search-container input {
+            width: 350px;
+            padding: 14px 20px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-neon);
+            border-radius: 30px;
+            color: #ffffff;
+            font-size: 1rem;
+            outline: none;
+            box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.05);
         }
 
-        /* Hộp thoại Pop-up Window (Modal) */
-        .modal-overlay { 
-            position: fixed; 
-            top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.7); 
-            backdrop-filter: blur(8px); 
-            display: none; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 1000; 
+        .search-container input:focus {
+            border-color: var(--text-glow);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
         }
 
-        .modal-content { 
-            background: var(--bg-card); 
-            border: 1px solid var(--border-color); 
-            color: var(--text-primary); 
-            width: 90%; 
-            max-width: 600px; 
-            padding: 35px; 
-            border-radius: 16px; 
-            position: relative; 
-        }
-
-        .close-modal-btn { 
-            position: absolute; 
-            top: 15px; right: 20px; 
-            font-size: 2rem; 
-            background: transparent; 
-            border: none; 
-            color: var(--text-primary); 
-            cursor: pointer; 
-        }
-
-        .modal-tag {
-            font-size: 0.8rem;
-            background: var(--nasa-blue);
-            padding: 4px 10px;
-            border-radius: 4px;
+        .counter-badge {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--text-glow);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
             font-weight: bold;
+        }
+
+        /* Lưới hiển thị giải pháp */
+        .solutions-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 25px;
+        }
+
+        .solution-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-neon);
+            border-radius: 14px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .solution-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-hover);
+            box-shadow: 0 10px 25px rgba(252, 61, 33, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .tech-id {
+            font-size: 0.8rem;
+            font-weight: bold;
+            background: rgba(252, 61, 33, 0.1);
+            color: var(--nasa-red);
+            padding: 4px 8px;
+            border-radius: 4px;
             text-transform: uppercase;
         }
 
-        .hidden { 
-            display: none !important; 
+        .category-tag {
+            font-size: 0.75rem;
+            font-weight: bold;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--text-glow);
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .solution-card h3 {
+            font-size: 1.25rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .problem-reference {
+            font-size: 0.85rem;
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.08);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 3px solid #fbbf24;
+        }
+
+        .solution-details {
+            font-size: 0.95rem;
+            color: #e5e7eb;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .action-area {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #4ade80;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #4ade80;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #4ade80;
+        }
+
+        .deploy-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .deploy-btn:hover {
+            background: #ffffff;
+            color: var(--bg-dark);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 640px) {
+            .search-container input { width: 100%; }
+            .dashboard-controls { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Canvas sinh hạt tương tác -->
-    <canvas id="space-canvas"></canvas>
+    <header>
+        <h1>MA TRẬN GIẢI PHÁP KHÔNG GIAN SÂU CỦA <span>NASA</span></h1>
+        <p>Hệ thống công nghệ ứng phó và bảo vệ phi hành đoàn trước 14 rủi ro sinh học cốt lõi</p>
+    </header>
 
-    <!-- Thanh điều hướng -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">🚀 <span>NASA Deep Space Hub</span></div>
-            <div class="nav-controls">
-                <button id="sound-ambient-btn" class="theme-btn sound-off">🎵 Bật âm thanh trạm ISS</button>
-                <button id="theme-toggle" class="theme-btn">🌙 Chế độ nền</button>
-            </div>
+    <section class="dashboard-controls">
+        <div class="search-container">
+            <input type="text" id="solution-search" placeholder="🔍 Tìm kiếm giải pháp, thiết bị, từ khóa...">
         </div>
-    </nav>
+        <div class="counter-badge">
+            🚀 Đang hiển thị: <span id="visible-count">14</span> / 14 Giải pháp chiến lược
+        </div>
+    </section>
 
-    <!-- Trình mô phỏng ảnh hưởng sinh học -->
-    <section class="interactive-calc-section">
-        <div class="calc-container">
-            <h2>📊 TRÌNH MÔ PHỎNG ẢNH HƯỞNG SỨC KHỎE (MISSION CALCULATOR)</h2>
-            <p>Nhập số tháng bạn dự định du hành ngoài không gian sâu để tính toán tổn thương cơ thể:</p>
-            <div class="calc-inputs">
-                <input type="number" id="mission-months" min="1" max="120" value="6">
-                <button id="btn-calculate">Kích hoạt mô phỏng</button>
-            </div>
-            <div class="calc-results" id="calc-results-box">
+    <main class="solutions-grid" id="solutions-display-matrix">
+        <!-- Render động từ Javascript -->
+    </main>
+
+    <script>
+        // Cơ sở dữ liệu 14 giải pháp cốt lõi tương ứng với 14 vấn đề của NASA
+        const nasaSolutionsData = [
+            { id: 1, type: "Thiết bị", cat: "Sinh lý học", title: "Bộ đồ áp lực âm hạ thân (LBNP Sleeping Bag)", target: "Hội chứng SANS (Áp lực thần kinh mắt)", details: "Thiết bị dạng túi ngủ đặc biệt tạo áp suất hút âm cho nửa thân dưới trong lúc phi hành gia ngủ, giúp kéo ngược chất lỏng và máu về phía hai chân, giải tỏa triệt để áp lực nội sọ tích tụ lên nhãn cầu." },
+            { id: 2, type: "Y sinh", cat: "Sinh lý học", title: "Phác đồ vi lượng & Màng lọc khí HEPA phân tầng", target: "Suy giảm chức năng hệ miễn dịch", details: "Sử dụng hệ thống màng lọc không khí chuẩn vi sinh quân đội để ngăn bụi mịn, kết hợp bổ sung lợi khuẩn đường ruột (Probiotics) đậm đặc và tối ưu hóa lượng Vitamin D hấp thụ hàng ngày." },
+            { id: 3, cat: "Sinh lý học", type: "Phần mềm", title: "Hệ thống mô phỏng thực tế ảo VR Tiền Tiền Đình", target: "Rối loạn cảm giác vận động", details: "Ứng dụng kính VR thực tế ảo chạy phần mềm kích thích thị giác nâng cao trước và trong chuyến bay, giúp não bộ phi hành gia làm quen với sự mất đồng bộ giữa mắt và tai trong." },
+            { id: 4, type: "Cơ học", cat: "Sinh lý học", title: "Hệ thống tập kháng lực nâng cao (ARED)", target: "Thoái hóa và mất chất khoáng xương", details: "Thiết bị sử dụng các xi-lanh chân không mô phỏng lực tạ nặng lên tới 270kg ở Trái Đất. Phi hành gia bắt buộc phải nâng tạ gánh (Squat) và nhấc tạ (Deadlift) 2.5 giờ mỗi ngày để kích thích tế bào xương tái tạo." },
+            { id: 5, type: "Cơ học", cat: "Sinh lý học", title: "Máy chạy bộ chịu lực kéo dây T2 & Áo nén áp lực", target: "Teo cơ xương & Suy giảm tim mạch", details: "Phi hành gia được buộc chặt vào máy chạy bằng hệ thống dây đàn hồi chịu lực cao, ép tim và hệ cơ chân phải làm việc liên tục để duy trì kích thước cơ tim và ngăn chặn hiện tượng teo cơ bắp vĩnh viễn." },
+            { id: 6, type: "Y tế", cat: "Sinh lý học", title: "Giao thức siêu âm mạch máu tự động & Thuốc tiêm nén", target: "Huyết khối tĩnh mạch sâu (VTE)", details: "Trang bị máy siêu âm 4D kích thước nhỏ gọn kết hợp AI tự quét mạch cổ định kỳ. Nếu phát hiện cục máu đông, phi hành gia sẽ sử dụng các ống tiêm tự động nén chứa hoạt chất kháng đông đặc hiệu." },
+            { id: 7, type: "Quy trình", cat: "Sinh lý học", title: "Giao thức thanh lọc độc bản Oxy thuần khiết", target: "Bệnh giảm áp đột ngột (EVA)", details: "Trước khi bước ra ngoài không gian (đi bộ EVA), phi hành gia phải vào khoang đệm và thở bằng khí Oxy 100% trong nhiều giờ liên tục nhằm đào thải toàn bộ khí Nitơ tự do trong máu ra ngoài." },
+            { id: 8, type: "Nông nghiệp", cat: "Sinh lý học", title: "Hệ thống trồng rau thủy canh Veggie & Màng bọc từ tính", target: "Biến chất dinh dưỡng thực phẩm", details: "Phát triển các 'gối trồng cây' sử dụng đèn LED chuyên dụng để sản xuất rau tươi (xà lách, cà chua bi) trực tiếp trên tàu. Đồng thời bọc thực phẩm khô bằng màng polymer đa lớp cản tia bức xạ." },
